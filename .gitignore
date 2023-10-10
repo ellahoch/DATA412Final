@@ -1,0 +1,50 @@
+# Ignore RStudio project files
+.Rproj.user/
+
+# Ignore the renv folder
+renv/
+
+# Ignore generated R Markdown and Quarto documents
+*.html
+*.pdf
+*.docx
+*.md
+
+# Ignore Quarto's build directory
+.quarto/
+
+# Ignore R Markdown and Quarto document backup files
+*.Rmd~
+*.qmd~
+
+# Ignore .Rhistory and .RData files
+.Rhistory
+.RData
+
+# Ignore generated image files, if any
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+
+# Ignore LaTeX intermediate files (if using LaTeX)
+*.aux
+*.log
+*.out
+*.toc
+
+# Ignore compiled code or package files
+*.o
+*.so
+*.dll
+*.pyc
+
+# Ignore system and temporary files
+.Rcheck/
+.Rproj.user/
+.RData
+.Rhistory
+.Renviron
+.Rprofile
+renv.lock
