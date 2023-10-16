@@ -1,16 +1,7 @@
 Column1,Column2,Column3,Column4,Column5,Column6,Column8,Column9,Column10,Column102,Column11,Column12,Column13,Column14
 STATE,"Total
 Seats","Total
-Senate","Senate
-Dem.","Senate
-Rep.",Prop_Senate_Rep,"Total
-House","House
-Dem.","House
-Rep.",Prop_House_Rep,"House
-other","Leg.
-Control","Gov.
-Party","State
-Control"
+Senate",SenateDem,SenateRep,Prop_Senate_Rep,TotalHouse,HouseDem,HouseRep,Prop_House_Rep,Houseother,LegControl,GovParty,StateControl
 Alabama,140,35,7,26,0.742857143,105,28,77,0.733333333,,Rep,Rep,Rep
 Alaska,60,20,7,13,0.65,40,15,21,0.525,4,Rep,Rep,Rep
 Arizona,90,30,14,16,0.533333333,60,28,31,0.516666667,1v,Rep,Rep,Rep
