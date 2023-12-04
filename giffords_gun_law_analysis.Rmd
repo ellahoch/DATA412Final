@@ -7,6 +7,8 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(tidyverse)
 ```
 
 
@@ -49,6 +51,26 @@ scorecard %>%
             Average_Death_Rate_Rank = mean(Gun_Death_Rate_Rank),
             SD_Death_Rate_Rank = sd(Gun_Death_Rate_Rank),
             Averate_Death_Rate_Per_100k = mean(Gun_Deaths_Per_100k),
-            SD_Death_Rate_Per_100k = sd(Gun_Deaths_Per_100k))
+            SD_Death_Rate_Per_100k = sd(Gun_Deaths_Per_100k)) ->
+  scorecard_generalized
+
+head(scorecard_generalized)
+
+ggplot(scorecard_generalized, aes(Grade, Average_Ranking, fill = Grade)) +
+  geom_bar(stat="identity") +
+  coord_flip() +
+  labs(y = "Average Ranking", title = "Average Gun Law Strength Rank For Each Grade For States in the US", subtitle = "Data courtesy of Gilfords Law Center")
+
+ggplot(scorecard_generalized, aes(Grade, Average_Death_Rate_Rank, fill = Grade)) +
+  geom_bar(stat="identity") +
+  coord_flip() +
+  labs(y = "Average Ranking For Death Rate", title = "Average Ranking For Death Rate Rank For Each Grade For States in the US", subtitle = "Data courtesy of Gilfords Law Center")
+
+ggplot(scorecard_generalized, aes(Grade, Averate_Death_Rate_Per_100k, fill = Grade)) +
+  geom_bar(stat="identity") +
+  coord_flip() +
+  labs(y = "Average Death Rate Per 100k", title = "Average Death Rate Per 100k Rank For Each Grade For States in the US", subtitle = "Data courtesy of Gilfords Law Center")
+
+
 ```
 
