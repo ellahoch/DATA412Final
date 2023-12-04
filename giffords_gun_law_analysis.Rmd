@@ -1,0 +1,49 @@
+---
+title: "gun_law_scorecard_analysis"
+author: "Wesley Hoy"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+scorecard <- read_csv("data/giffords_gun_law_scorecard_2021.csv") %>%
+  mutate(Grade = substr(Grade, 1, 1)) # Remove + and - from grades for easier data analysis
+  
+
+head(scorecard)
+
+
+scorecard %>%
+  filter(Grade == "A") %>%
+  nrow()
+
+scorecard %>%
+  filter(Grade == "B") %>%
+  nrow()
+
+scorecard %>%
+  filter(Grade == "C") %>%
+  nrow()
+
+scorecard %>%
+  filter(Grade == "D") %>%
+  nrow()
+
+scorecard %>%
+  filter(Grade == "F") %>%
+  nrow()
+```
+
+As you can see, a majority of states in the US have a low gun law rating, according to Giffords Law Center. Now, let's match up their scores to their gun law rank
+
+```{r}
+scorecard %>%
+  group_by(Grade) %>%
+  summarize(Average_Ranking = mean(Gun_Law_Strength_Rank))
+```
+
