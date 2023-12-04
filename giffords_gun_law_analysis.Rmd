@@ -44,6 +44,11 @@ As you can see, a majority of states in the US have a low gun law rating, accord
 ```{r}
 scorecard %>%
   group_by(Grade) %>%
-  summarize(Average_Ranking = mean(Gun_Law_Strength_Rank))
+  summarize(Average_Ranking = mean(Gun_Law_Strength_Rank),
+            SD_Ranking = sd(Gun_Law_Strength_Rank),
+            Average_Death_Rate_Rank = mean(Gun_Death_Rate_Rank),
+            SD_Death_Rate_Rank = sd(Gun_Death_Rate_Rank),
+            Averate_Death_Rate_Per_100k = mean(Gun_Deaths_Per_100k),
+            SD_Death_Rate_Per_100k = sd(Gun_Deaths_Per_100k))
 ```
 
