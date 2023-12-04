@@ -55,3 +55,14 @@ combined_df <- combined_df |> left_join(pop_state)
 
 
 summary(lm(hate_crime_count ~ total_prop + pop_2021, data = combined_df))
+
+
+## regression no outliers
+
+no_outliers_df <- combined_df |> 
+  filter(hate_crime_count < 450) |> 
+  filter(hate_crime_count > 2)
+
+summary(lm(hate_crime_count ~ total_prop + pop_2021, data = no_outliers_df))
+
+
