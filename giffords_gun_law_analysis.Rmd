@@ -74,3 +74,39 @@ ggplot(scorecard_generalized, aes(Grade, Averate_Death_Rate_Per_100k, fill = Gra
 
 ```
 
+# Matching Gun Law Rankings to Likelihood of Hate Crimes
+
+```{r}
+hate_crime <- read_csv("data/hate_crime.csv") %>%
+  filter(data_year == 2021) %>%
+  group_by(state_name) %>%
+  summarize(crimes_reported = n()) %>%
+  rename(State = state_name) -> hate_crime
+
+hate_crime <- hate_crime %>%
+  full_join(scorecard, by ="State") %>%
+  filter(!(is.na(Grade)))
+
+hate_crime %>%
+  group_by(Grade) %>%
+  summarize(avg_crimes_reported = mean(crimes_reported, na.rm=TRUE)) %>%
+  ggplot(aes(Grade, avg_crimes_reported)) + 
+    geom_bar(stat="identity")
+
+hate_crime %>%
+  group_by(Grade) %>%
+  summarize(sd_crimes_reported = sd(crimes_reported, na.rm=TRUE)) %>%
+  ggplot(aes(Grade, sd_crimes_reported)) + 
+    geom_bar(stat="identity")
+
+
+
+```
+
+```{r}
+print(class(hate_crime$State))
+print(class(scorecard_generalized$State))
+```
+
+
+
