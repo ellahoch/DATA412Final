@@ -49,7 +49,7 @@ ggplot(combined_df, aes(hate_crime_count)) +
 
 ### read in pop data
 
-pop_state <- read_csv("NST-EST2021-alldata.csv")
+pop_state <- read_csv("data/NST-EST2021-alldata.csv")
 
 combined_df |> left_join(pop_state)
 
