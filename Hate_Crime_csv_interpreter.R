@@ -33,3 +33,14 @@ ggplot(combined_df, aes(total_prop, hate_crime_count)) +
   labs(title = "State Legislature Composition and 2021 Hate Crime Count",
        y = "Number of Hate Crimes Reported",
        x = "Proportion of Republicans in State Legislature")
+
+ggplot(combined_df, aes(total_prop)) +
+  geom_boxplot(bins = 7) +
+  labs(x = "Proportion of Republicans in State Legislature",
+       title = "Distribution of State Legislature Composition")
+
+ggplot(combined_df, aes(hate_crime_count)) +
+  geom_boxplot(bins = 10)+
+  labs(x = "Hate Crime Count by State",
+       title = "Distribution of Hate Crime Count by State")
+
