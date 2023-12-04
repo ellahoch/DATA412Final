@@ -51,12 +51,7 @@ ggplot(combined_df, aes(hate_crime_count)) +
 
 pop_state <- read_csv("NST-EST2021-alldata.csv")
 
-combined_df |> left_join(pop_state)
+combined_df <- combined_df |> left_join(pop_state)
 
 
-ggplot(combined_df, aes(total_prop, hate_crime_count)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "State Legislature Composition and 2021 Hate Crime Count",
-       y = "Number of Hate Crimes Reported",
-       x = "Proportion of Republicans in State Legislature")
+summary(lm(hate_crime_count ~ total_prop + pop_2021, data = combined_df))
