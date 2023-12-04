@@ -53,3 +53,6 @@ renv/
 .Renviron
 .Rprofile
 renv.lock
+
+# MacOS filesystem
+.DS_Store

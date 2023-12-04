@@ -1,7 +1,7 @@
 library(tidyverse)
 library(janitor)
 
-read_csv("hate_crime.csv") %>%
+read_csv("data/hate_crime.csv") %>%
   filter(data_year == "2021") ->
   df
 
@@ -12,7 +12,7 @@ df <- df |>
   group_by(state)
 count_of_crimes <- summarize(df, n = n())
 
-leg_comp <- read_csv("state_leg2021.csv", skip = 1)
+leg_comp <- read_csv("data/state_leg2021.csv", skip = 1)
 leg_comp <- clean_names(leg_comp)
 
 combined_df <- count_of_crimes |> 
@@ -49,7 +49,7 @@ ggplot(combined_df, aes(hate_crime_count)) +
 
 ### read in pop data
 
-pop_state <- read_csv("NST-EST2021-alldata.csv")
+pop_state <- read_csv("data/NST-EST2021-alldata.csv")
 
 combined_df <- combined_df |> left_join(pop_state)
 
