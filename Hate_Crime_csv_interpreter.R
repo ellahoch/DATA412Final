@@ -12,7 +12,7 @@ df <- df |>
   group_by(state)
 count_of_crimes <- summarize(df, n = n())
 
-leg_comp <- read_csv("data/state_leg2021.csv", skip = 1)
+leg_comp <- read_csv("data/state_leg2021.csv")
 leg_comp <- clean_names(leg_comp)
 
 combined_df <- count_of_crimes |> 
@@ -59,10 +59,69 @@ summary(lm(hate_crime_count ~ total_prop + pop_2021, data = combined_df))
 
 ## regression no outliers
 
-no_outliers_df <- combined_df |> 
-  filter(hate_crime_count < 450) |> 
-  filter(hate_crime_count > 2)
+# no_outliers_df <- combined_df |> 
+#   filter(hate_crime_count < 450) |> 
+#   filter(hate_crime_count > 2)
 
 summary(lm(hate_crime_count ~ total_prop + pop_2021, data = no_outliers_df))
 
+summary(lm(hate_crime_count ~ pop_2021, data = combined_df))
+
+police_data <- read_csv("data/policeofficersbystate.csv", skip = 3, col_names = c("state","num_police"))
+
+
+
+combined_df <- combined_df |> 
+  left_join(police_data, by = "state")
+
+summary(lm(hate_crime_count ~ num_police + pop_2021, data = combined_df))
+
+no_outs_df <- combined_df |> 
+  filter(hate_crime_count > 10)
+
+summary(lm(hate_crime_count ~ num_police + pop_2021, data = no_outs_df))
+
+ggplot(no_outs_df, aes(num_police, hate_crime_count, color = pop_2021)) +
+  geom_point(size = 2.5) +
+  labs(
+    title = "Association between Number of Police, Population, and Hate \nCrime Count by State",
+    x = "Number of reported police",
+    y = "Hate crime count"
+  )
+
+
+ggplot(combined_df, aes(num_police))+
+  geom_boxplot() +
+  scale_y_continuous(breaks = NULL) +
+  labs(
+    title = "Distribution of Number of Police Registered by State",
+    x = "Number of Police"
+  ) 
+
+ratio_df <- combined_df |> 
+  mutate(ratio_pol_pop = num_police/pop_2021)
+
+
+
+ggplot(ratio_df, aes(ratio_pol_pop))+
+  geom_boxplot() +
+  scale_y_continuous(breaks = NULL) +
+  labs(title = "Distribution of Ratio of Police Officers and State Population",
+       x = "Ratio Police/Population")
+
+summary(lm(hate_crime_count~ratio_pol_pop, data = ratio_df))
+
+
+group_df <- combined_df |> 
+  group_by(leg_control)
+
+dem_control <- combined_df |> 
+  filter(state_control == "Dem") |> 
+  pull(hate_crime_count)
+
+rep_control <- combined_df |> 
+  filter(state_control == "Rep") |> 
+  pull(hate_crime_count)
+
+t.test(dem_control, rep_control)
 
