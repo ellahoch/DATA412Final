@@ -83,6 +83,8 @@ hate_crime <- read_csv("data/hate_crime.csv") %>%
   summarize(crimes_reported = n()) %>%
   rename(State = state_name) -> hate_crime
 
+hate_crime
+
 hate_crime <- hate_crime %>%
   full_join(scorecard, by ="State") %>%
   filter(!(is.na(Grade)))
@@ -103,10 +105,63 @@ hate_crime %>%
 
 ```
 
+# Ratio of Hate Crimes to Population
+
 ```{r}
-print(class(hate_crime$State))
-print(class(scorecard_generalized$State))
+read_csv("data/countypres_2000-2020.csv") %>%
+  rename(State = state) %>%
+  filter(year == 2020) %>%
+  group_by(State, party) %>%
+  summarize(totalvotes = sum(candidatevotes)) %>%
+  pivot_wider(names_from=party, values_from=totalvotes) %>%
+  mutate(did_trump_win = (REPUBLICAN > DEMOCRAT)) %>%
+  select(State, did_trump_win) -> log
+
+log$State <- str_to_title(log$State)
+
+log%>%
+  left_join(hate_crime, by = "State") %>%
+  group_by(did_trump_win) %>%
+  summarize(avg_crimes = mean(crimes_reported, na.rm=TRUE)) %>%
+  ggplot(aes(did_trump_win, avg_crimes)) +
+    geom_bar(stat="identity") +
+    ggtitle("Avg # of Hate Crimes in States Where Trump Won vs. Lost in 2020") +
+    labs(x = "Trump Won", y = "Average Number of Hate Crimes Grouped by State")
 ```
+
+
+```{r}
+read_csv("data/NST-EST2021-alldata.csv") %>%
+  rename(State = state) %>%
+  left_join(hate_crime, by="State") %>%
+  group_by(State) %>%
+  summarize(crimes_to_pop = (crimes_reported/pop_2021)) ->
+  crimes_to_pop_df
+
+
+read_csv("data/countypres_2000-2020.csv") %>%
+  rename(State = state) %>%
+  filter(year == 2020) %>%
+  group_by(State, party) %>%
+  summarize(totalvotes = sum(candidatevotes)) %>%
+  pivot_wider(names_from=party, values_from=totalvotes) %>%
+  mutate(did_trump_win = (REPUBLICAN > DEMOCRAT)) %>%
+  select(State, did_trump_win) -> trump_to_crimes
+  
+trump_to_crimes$State <- str_to_title(trump_to_crimes$State)
+
+trump_to_crimes%>%
+  left_join(crimes_to_pop_df, by = "State") %>%
+  group_by(did_trump_win) %>%
+  summarize(avg_crimes = mean(crimes_to_pop, na.rm=TRUE)) %>%
+  ggplot(aes(did_trump_win, avg_crimes)) +
+    geom_bar(stat="identity") +
+    ggtitle("Avg Ratio of Crimes to Population in States Where Trump Won vs. Lost in 2020") +
+    labs(x = "Trump Won", y = "Average Ratio of Crimes Grouped by State")
+
+
+```
+
 
 
 
