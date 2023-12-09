@@ -206,7 +206,9 @@ This model did not explain much of the variation in hate crimes by state. This i
 
 # Conclusion
 
-Going forward, we may want to control for state population in our data analysis. We suspect there may be more hate crimes in states with larger populations.We could either use a proportion, or control for population in multivariate regression. In addition, we could create a binary variable for party control of State Legislatures and conduct analysis on the dummy variable. 
+The number of police officers in a state controlling for the state population explains the most variance of hate crimes in the US by state. Surprisingly, the relationship between every other variable we looked into and the occurrence of hate crimes was found to be non-statistically significant. Going forward, we may want to control for state population in our data analysis. We suspect there may be more hate crimes in states with larger populations. We could either use a proportion, or control for population in multivariate regression. In addition, we could create a binary variable for party control of State Legislatures and conduct analysis on the dummy variable. Additionally, we could do further research on a number of variables like Median state income
+Income inequality, Unemployment rate, Proportion of non-US citizens, Education, Population density, and Urbanization. Based on the analyses we conducted in our literature review, we know these socioeconomic variables are more likely to have a statistically significant relationship with hate crimes.
+
 
 
 # Reference Documents:
