@@ -125,3 +125,20 @@ rep_control <- combined_df |>
 
 t.test(dem_control, rep_control)
 
+pol_funding <- read_csv("data/police_funding.csv", col_types = "cd",
+                        col_names = c("state", "pol_funds"))
+
+combined_df <- combined_df |> 
+  left_join(pol_funding, by = "state")
+  
+ggplot(combined_df, aes(pol_funds)) +
+  geom_boxplot() +
+  scale_y_continuous(breaks = NULL)+
+  labs(
+    title = "Distribution of Police Funding per capita",
+    x = "Police funds"
+  )
+
+summary(lm(hate_crime_count ~ pol_funds, data = combined_df))
+
+summary(lm(hate_crime_count~pol_funds + total_prop, data = combined_df))
