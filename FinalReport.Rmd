@@ -130,16 +130,84 @@ summary(lm(hate_crime_count ~ num_police + pop_2021, data = combined_df))
 
 We did find a statistically significant association between the number of police and population on the number of hate crimes reported by state. Notably, there is a negative association between the number of police and hate crimes reported in each state. This means that as the number of police in a state increase, we expect the number of hate crimes to decrease.
 
+```{r}
+ggplot(combined_df, aes(num_police, hate_crime_count, color = pop_2021)) +
+  geom_point(size = 2.5) +
+  labs(
+    title = "Association between Number of Police, Population, and Hate \nCrime Count by State",
+    x = "Number of reported police",
+    y = "Hate crime count"
+  )
+```
+
+
 There could be a few reasons for this. A higher police presence could act as a deterrent to hate crimes, or states with larger police forces could be less likely to report hate crimes to the FBI.
+
+Next, we looked at whether or not the control of the state government had any affect on the number of hate crimes reported. We used a two sample t test to answer this question.
+
+```{r}
+dem_control <- combined_df |> 
+  filter(state_control == "Dem") |> 
+  pull(hate_crime_count)
+
+rep_control <- combined_df |> 
+  filter(state_control == "Rep") |> 
+  pull(hate_crime_count)
+
+t.test(dem_control, rep_control)
+```
+
+The t-test had a p-value well above out alpha level of .05. This means that there is not a statistically significant association between control of the state legislature and the number of hate crimes reported. This is consistent with our finding that the proportion of Republicans in the state legislature does not have a statistically significant association with the number of hate crimes reported.
+
+Since we found that the number of police had a significant association with the number of hate crimes reported, we wanted to further investigate how police funding relates to hate crimes within a state. We found police funding data by state and added it to our dataframe.
+
+```{r}
+pol_funding <- read_csv("data/police_funding.csv", col_types = "cd",
+                        col_names = c("state", "pol_funds"))
+
+combined_df <- combined_df |> 
+  left_join(pol_funding, by = "state")
+```
+
+```{r}
+ggplot(combined_df, aes(pol_funds)) +
+  geom_boxplot() +
+  scale_y_continuous(breaks = NULL)+
+  labs(
+    title = "Distribution of Police Funding per capita",
+    x = "Police funds"
+  )
+```
+The distribution of police funds by state was not skewed and had no outliers. We used this data in a univariate linear regression to examine the variable before we added other factors.
+
+```{r}
+summary(lm(hate_crime_count ~ pol_funds, data = combined_df))
+```
+
+```{r}
+ggplot(combined_df, aes(pol_funds, hate_crime_count)) +
+  geom_point()+
+  geom_smooth(method = "lm", se = F) +
+  labs(title = "Police Funding and Hate Crimes Reported by State in 2021",
+       x = "Police funding per capita",
+       y = "Hate crime count")
+```
+There is not a very strong relationship between police funding and hate crimes reported by state. This indicates that the number of police may have a larger impact on hate crimes than police funding.
+
+We added the proportion of Republicans in the state legislature back into our linear model to investigate the relationship of police funding, state legislature composition, and hate crimes. 
+
+```{r}
+summary(lm(hate_crime_count~pol_funds + total_prop, data = combined_df))
+
+```
+
+This model did not explain much of the variation in hate crimes by state. This indicates that there is not a statistically significant relationship between the number of hate crimes, proportion of Republicans in the state legislature and police funding.
 
 # Conclusion
 
 Going forward, we may want to control for state population in our data analysis. We suspect there may be more hate crimes in states with larger populations.We could either use a proportion, or control for population in multivariate regression. In addition, we could create a binary variable for party control of State Legislatures and conduct analysis on the dummy variable. 
 
-Procedure:
 
-	The general form of our analysis would start with the ggplot2 and dplyr libraries. We would merge the two data sets, clean the data, and eliminate different values. From there, we have several choices. We could calculate the correlation coefficient between the share of Republicans and the number of hate crimes to measure the strength and direction of the linear relationship, create a heat map to visualize the relationship between multiple variables, including the share of Republicans and hate crimes, and identify patterns visually, or categorize states based on the share of Republicans (e.g., low, medium, high) and compare the average number of hate crimes in these categories. Assuming the relationship between the two variables is found to be non-linear when calculating correlation coefficient, we use non-parametric tests like the Spearman rank correlation coefficient to assess the correlation.
-	
 # Reference Documents:
 
 Brian Levin, James Nolan, and Kiana Perst, U.S. Hate Crime Trends: What Disaggregation of Three Decades of Data Reveals About a Changing Threat and an Invisible Record, 112 J. CRIM. L. & CRIMINOLOGY 749 (2023). 
