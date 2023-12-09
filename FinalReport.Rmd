@@ -4,3 +4,152 @@ author: "Ella Hoch Robinson"
 date: "2023-12-09"
 output: pdf_document
 ---
+
+### DATA 412/612 Final Proposal: Data Analysis on Hate Crimes and Political Affiliations
+
+Liam Volk-Klos, Ella Robinson, Wesley Hoy
+
+# Introduction
+
+At least three datasets. By comparing states with like demographics, we separate the political affiliation of the state legislature as the explanatory variable.
+
+Our hate crime dataset was taken from the FBI’s Crime Data Explorer tool. It was gathered from the 2022 data on hate crimes reported from 14,660 law enforcement agencies across the country. Before cleaning, the dataset contained 226,329 observations and 28 variables of both categorical and quantitative variety. These include: the incident ID, the year of the incident, the race of the offender, the victim count of the offender, the type of crime perpetrated, the state where the crime took place, the city where the crime took place, the specific locale where the crime took place, the bias the crime was perpetrated with, and whether the victim was individual or multiple.
+
+In contrast, our secondary dataset is from the National Conference of State Legislatures website. It contains 56 observations of 13 variables. Four of the variables are categorical. Those are state (including six U.S. territories), which political party is in control of the state legislature, which political party is in control of the governorship, and which political party control the state senate. Most of the variables are quantitative such as total number of seats in the state House of Representatives, total number of seats in the state Senate, the number of Democrats in the state House of Reps., the number of Republicans in the state Senate, etc. 
+
+We also added variables from a wide variety of sources, like police data from a report to the US Department of Justice, and police funding data by state. Additionally, we investigated the political leaning of each state by looking at the 2020 presidential election results, and a rating of gun safety laws by state.
+
+# Literature Review
+
+In “Hate Crime Analysis based on Artificial Intelligence Methods”, author Shaoxuan Wang uses machine learning to perform data analysis upon hate crime statistics from 2010- after the 2016 presidential election using linear regression, multiple linear regression, and the k-nearest-neighbors algorithm. The goal was to figure out if the factors income inequality (expressed by Gini index), median household income, share of the population that lives in metropolitan areas, share of the population that are not U.S. citizens, share of the population that is unemployed (seasonally adjusted), and race are strongly correlated with hate crimes before and after the election. The aforementioned k-nearest-neighbors algorithm was then used to try and predict hate crimes through the most strongly correlated factors. Those turned out to be income inequality, median household income, the share of non-citizen, and race with income inequality being the most highly correlated to hate crimes. Wang found hate crime rate to be predictable about 50% of the time when applying the k-nearest-neighbors algorithm with the income inequality, median household income, and race variables. The conclusion was that they impact hate crime to a significant extent based on this.
+Our data analysis will be reviewing FBI’s data on hate crimes. According to the FBI, “thousands of law enforcement agencies voluntarily submit data to the Uniform Crime Reporting Program’s (UCR) Hate Crime Statistics Data Collection on crimes motivated by prejudice based on race, gender and gender identity, religion, disability, sexual orientations, or ethnicity.” (FBI) 
+
+	In “U.S. Hate Crime Trends: What Disaggregation of Three Decades of Data Reveals About a Changing Threat and an Invisible Record,” Brian Levin, James Nolan, and Kiana Perst describe the changing reporting methods of hate crimes in the US. By combining other sources with FBI data, they observe an increase in hate crimes in 2021, especially when broken down by race. They find that hate crimes tend to spike when there is a high profile identity-based crime. For example, Levin, Nolan, and Perst connect the spike in hate crimes in 2021 to the murder of George Floyd.
+	
+	In our data analysis, we are considering only one year of hate crime data, not measuring over time. This will reduce some of the inconsistencies observed by Levin, Nolan, and Perst, though we should still be conscious of potentially misleading data reporting. Any correlations we observe may not be generalizable to hate crimes over time because we are only investigating one year. 
+	
+While the data provided by the FBI is the most comprehensive and accurate data on hate crimes in the US, it contains many inconsistencies because law enforcement agencies are not mandated to report all hate crimes to the FBI. According to a 2017 report, Only 2,172 of 15,588 law enforcement agencies across the United States reported any hate crimes. While many agencies could have reasonably not received any reports of hate crimes, the number is so significantly low that it is reasonable that a large amount of hate crimes are not being reported.  (Journal of Blacks in Higher Education, 2020) There are some states that will contain incomplete or missing data on their hate crimes.
+
+# Initial Hypotheses
+
+We hypothesize that there is a significant correlation between the political party of affiliation of a state and the incidence of hate crimes within that state. Specifically, we expect to find that states with a higher representation of one political party may experience a different level of hate crime incidents compared to states where another political party is predominant. This hypothesis is based on the premise that political climate and policies may influence the prevalence and nature of hate crimes within a given state. Media outlets, like The New York Times claim that those with political ideologies leaning to the right side of American politics appeal to those who would be motivated to do hate crimes. The New York Times directly states, with information from the Anti-Defamation League (ADL), that hate crimes against blacks are committed by white supremacists who are directly tied to right-wing extremism. Hate crimes against African-Americans accounted for almost 30% of confirmed hate crimes in 2021 (FBI). Therefore, there is a reasonable suspicion that hate crimes can be more prevalent with states with more right-wing extremists or the the affiliated conservative Republican party.
+
+# Data Analysis
+
+```{r echo=T, results='hide', warning=FALSE, message=FALSE}
+
+library(tidyverse)
+library(janitor)
+
+read_csv("data/hate_crime.csv") %>%
+  filter(data_year == "2021") ->
+  df
+
+df <- df |> 
+  rename(state = state_name)
+
+df <- df |> 
+  group_by(state)
+
+count_of_crimes <- summarize(df, n = n())
+
+leg_comp <- read_csv("data/state_leg2021.csv")
+leg_comp <- clean_names(leg_comp)
+
+combined_df <- count_of_crimes |> 
+  left_join(leg_comp, by = "state")
+
+combined_df <- combined_df |> 
+  rename(hate_crime_count = n)
+
+combined_df <- combined_df |> 
+  mutate(total_prop = (senate_rep + house_rep)/total_seats) |> 
+  filter(!is.na(total_prop))
+
+```
+
+
+Our two primary variables are the proportion of Republicans in the state legislature and the number of hate crimes reported in every state. The proportion of Republicans in the state legislature is equal to the total number of Republicans in the House and the Senate divided by the Total number of seats in the state legislature. The distribution of State Legislature composition is fairly uniform with a mean close to 5 and no outliers. We removed Nebraska and Washington DC because we had incomplete data for both jurisdictions. This left a sample size of 49 observations.
+
+We created a new column based on the proportion of Republicans in the state legislature. We examined the distribution of this variable along with other variables we are working with. We did not find any outliers that we thought reflected a issue with data reporting, so we decided to include outlier observations in our analysis.
+
+```{r}
+ggplot(combined_df, aes(total_prop)) +
+  geom_boxplot(bins = 7) +
+  labs(x = "Proportion of Republicans in State Legislature",
+       title = "Distribution of State Legislature Composition")
+
+ggplot(combined_df, aes(hate_crime_count)) +
+  geom_boxplot(bins = 10)+
+  labs(x = "Hate Crime Count by State",
+       title = "Distribution of Hate Crime Count by State")
+```
+
+The distribution of hate crime count by state is skewed right with three outliers of Washington Ohio and Texas. The mean is approximately 100 hate crimes with a range from 1 to about 600. A higher number of hate crimes could be explained by larger populations, so we may control for population in our final analysis.
+
+```{r}
+ggplot(combined_df, aes(total_prop, hate_crime_count)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "State Legislature Composition and 2021 Hate Crime Count",
+       y = "Number of Hate Crimes Reported",
+       x = "Proportion of Republicans in State Legislature")
+```
+
+The scatter plot comparing the proportion of Republicans and state legislature and the number of hate crimes reported in each state does not show a strong relationship between the two variables. The linear regression line has a slight downward trend, though it likely does not indicate a statistically significant relationship. 
+
+Next, we decided to include population data from the US Census. We were concerned that states with a higher population had a higher number of hate crimes only because they had a higher population. We used population data from 2021, which should be fairly accurate because the US Census was taken in 2020.
+
+```{r, message=FALSE, results='hide'}
+pop_state <- read_csv("data/NST-EST2021-alldata.csv")
+
+combined_df <- combined_df |> left_join(pop_state)
+```
+
+
+```{r}
+summary(lm(hate_crime_count ~ total_prop + pop_2021, data = combined_df))
+
+```
+
+Our linear regression showed that when controling for population, the association between the total proportion of Republicans in the state legislature and hate crime count in the state is not significant. The p-value of .77 is well above our alpha level of .05.
+
+Next, we decided to investigate the relationship between the number of police in a state and the number of hate crimes reported. We again controlled for the population of each state to ensure that population differences were held steady while we investigated these variables. 
+
+```{r, message=F, warning=F, results='hide'}
+police_data <- read_csv("data/policeofficersbystate.csv", skip = 3, col_names = c("state","num_police"))
+
+combined_df <- combined_df |> 
+  left_join(police_data, by = "state")
+```
+
+```{r}
+summary(lm(hate_crime_count ~ num_police + pop_2021, data = combined_df))
+
+```
+
+We did find a statistically significant association between the number of police and population on the number of hate crimes reported by state. Notably, there is a negative association between the number of police and hate crimes reported in each state. This means that as the number of police in a state increase, we expect the number of hate crimes to decrease.
+
+There could be a few reasons for this. A higher police presence could act as a deterrent to hate crimes, or states with larger police forces could be less likely to report hate crimes to the FBI.
+
+# Conclusion
+
+Going forward, we may want to control for state population in our data analysis. We suspect there may be more hate crimes in states with larger populations.We could either use a proportion, or control for population in multivariate regression. In addition, we could create a binary variable for party control of State Legislatures and conduct analysis on the dummy variable. 
+
+Procedure:
+
+	The general form of our analysis would start with the ggplot2 and dplyr libraries. We would merge the two data sets, clean the data, and eliminate different values. From there, we have several choices. We could calculate the correlation coefficient between the share of Republicans and the number of hate crimes to measure the strength and direction of the linear relationship, create a heat map to visualize the relationship between multiple variables, including the share of Republicans and hate crimes, and identify patterns visually, or categorize states based on the share of Republicans (e.g., low, medium, high) and compare the average number of hate crimes in these categories. Assuming the relationship between the two variables is found to be non-linear when calculating correlation coefficient, we use non-parametric tests like the Spearman rank correlation coefficient to assess the correlation.
+	
+# Reference Documents:
+
+Brian Levin, James Nolan, and Kiana Perst, U.S. Hate Crime Trends: What Disaggregation of Three Decades of Data Reveals About a Changing Threat and an Invisible Record, 112 J. CRIM. L. & CRIMINOLOGY 749 (2023). 
+
+Does the FBI’s hate crime data present A true vision of reality? (2020). Journal of Blacks in Higher Education (Online), Retrieved from https://www.proquest.com/scholarly-journals/does-fbi-s-hate-crime-data-present-true-vision/docview/2463251186/se-2
+
+Leonhardt, D. (2022, May 7). The morning: the right’s violence problem. The New York TImes. Retrieved October 17, 2023, from https://www.nytimes.com/2022/05/17/briefing/right-wing-mass-shootings.html?smid=url-share. 
+
+CDE. "Crime Data Explorer." Federal Bureau of Investigation, U.S. Department of Justice, Accessed [Date of Access], https://cde.ucr.cjis.gov/LATEST/webapp/#.
+
+Southern Poverty Law Center. "Hate Map." Southern Poverty Law Center, Accessed [Date of Access], https://www.splcenter.org/hate-map.
+
+National Conference of State Legislatures. "State Partisan Composition." National Conference of State Legislatures, Accessed [Date of Access], https://www.ncsl.org/about-state-legislatures/state-partisan-composition.
