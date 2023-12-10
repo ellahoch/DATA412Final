@@ -8,6 +8,7 @@ renv/
 *.html
 *.pdf
 *.docx
+*_files
 
 # Ignore any raw data
 .csv

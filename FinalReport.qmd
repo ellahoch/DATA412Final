@@ -1,13 +1,20 @@
 ---
-title: "Final Report"
-author: "Ella Hoch Robinson"
-date: "2023-12-09"
-output: pdf_document
+title: "DATA 412/612 Final Proposal: Data Analysis on Hate Crimes and Political Affiliations"
+author: "Liam Volk-Klos, Ella Robinson, Wesley Hoy"
+format: pdf
+editor: source
+toc: true
+secNumbering: true
 ---
 
-### DATA 412/612 Final Proposal: Data Analysis on Hate Crimes and Political Affiliations
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)\
+library(tidyverse)
+library(ggplot2)
+library(janitor)
+```
 
-Liam Volk-Klos, Ella Robinson, Wesley Hoy
+
 
 # Introduction
 
@@ -25,9 +32,9 @@ In a study similar to "Hate Crime Analysis Based on Artificial Intelligence Meth
 
 Our data analysis will be reviewing FBI’s data on hate crimes. According to the FBI, “thousands of law enforcement agencies voluntarily submit data to the Uniform Crime Reporting Program’s (UCR) Hate Crime Statistics Data Collection on crimes motivated by prejudice based on race, gender and gender identity, religion, disability, sexual orientations, or ethnicity.” (FBI) 
 
-	In “U.S. Hate Crime Trends: What Disaggregation of Three Decades of Data Reveals About a Changing Threat and an Invisible Record,” Brian Levin, James Nolan, and Kiana Perst describe the changing reporting methods of hate crimes in the US. By combining other sources with FBI data, they observe an increase in hate crimes in 2021, especially when broken down by race. They find that hate crimes tend to spike when there is a high profile identity-based crime. For example, Levin, Nolan, and Perst connect the spike in hate crimes in 2021 to the murder of George Floyd.
+In “U.S. Hate Crime Trends: What Disaggregation of Three Decades of Data Reveals About a Changing Threat and an Invisible Record,” Brian Levin, James Nolan, and Kiana Perst describe the changing reporting methods of hate crimes in the US. By combining other sources with FBI data, they observe an increase in hate crimes in 2021, especially when broken down by race. They find that hate crimes tend to spike when there is a high profile identity-based crime. For example, Levin, Nolan, and Perst connect the spike in hate crimes in 2021 to the murder of George Floyd.
 	
-	In our data analysis, we are considering only one year of hate crime data, not measuring over time. This will reduce some of the inconsistencies observed by Levin, Nolan, and Perst, though we should still be conscious of potentially misleading data reporting. Any correlations we observe may not be generalizable to hate crimes over time because we are only investigating one year. 
+In our data analysis, we are considering only one year of hate crime data, not measuring over time. This will reduce some of the inconsistencies observed by Levin, Nolan, and Perst, though we should still be conscious of potentially misleading data reporting. Any correlations we observe may not be generalizable to hate crimes over time because we are only investigating one year. 
 	
 While the data provided by the FBI is the most comprehensive and accurate data on hate crimes in the US, it contains many inconsistencies because law enforcement agencies are not mandated to report all hate crimes to the FBI. According to a 2017 report, Only 2,172 of 15,588 law enforcement agencies across the United States reported any hate crimes. While many agencies could have reasonably not received any reports of hate crimes, the number is so significantly low that it is reasonable that a large amount of hate crimes are not being reported.  (Journal of Blacks in Higher Education, 2020) There are some states that will contain incomplete or missing data on their hate crimes.
 
@@ -38,10 +45,6 @@ We hypothesize that there is a significant correlation between the political par
 # Data Analysis
 
 ```{r echo=T, results='hide', warning=FALSE, message=FALSE}
-
-library(tidyverse)
-library(janitor)
-
 read_csv("data/hate_crime.csv") %>%
   filter(data_year == "2021") ->
   df
@@ -193,6 +196,7 @@ ggplot(combined_df, aes(pol_funds, hate_crime_count)) +
        x = "Police funding per capita",
        y = "Hate crime count")
 ```
+
 There is not a very strong relationship between police funding and hate crimes reported by state. This indicates that the number of police may have a larger impact on hate crimes than police funding.
 
 We added the proportion of Republicans in the state legislature back into our linear model to investigate the relationship of police funding, state legislature composition, and hate crimes. 
@@ -210,7 +214,6 @@ The number of police officers in a state controlling for the state population ex
 Income inequality, Unemployment rate, Proportion of non-US citizens, Education, Population density, and Urbanization. Based on the analyses we conducted in our literature review, we know these socioeconomic variables are more likely to have a statistically significant relationship with hate crimes.
 
 
-
 # Reference Documents:
 
 Brian Levin, James Nolan, and Kiana Perst, U.S. Hate Crime Trends: What Disaggregation of Three Decades of Data Reveals About a Changing Threat and an Invisible Record, 112 J. CRIM. L. & CRIMINOLOGY 749 (2023). 
@@ -224,3 +227,12 @@ CDE. "Crime Data Explorer." Federal Bureau of Investigation, U.S. Department of 
 Southern Poverty Law Center. "Hate Map." Southern Poverty Law Center, Accessed [Date of Access], https://www.splcenter.org/hate-map.
 
 National Conference of State Legislatures. "State Partisan Composition." National Conference of State Legislatures, Accessed [Date of Access], https://www.ncsl.org/about-state-legislatures/state-partisan-composition.
+
+# Data Sets
+
+# Sources
+
+- Pew Research - "Political Affiliation by State": https://www.pewresearch.org/religion/religious-landscape-study/compare/political-ideology/by/state/
+- The Giffords Law Center - "Annual Gun Law Scorecard": https://giffords.org/lawcenter/resources/scorecard2021/
+- The Federal Bureau of Investigation - "Hate Crime Data via UCR Program": https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/downloads
+- United States Census Bereau - "Annual Estimates of the Resident Population for the United States, States, and the District of Columbia: 2021 (NST-EST2021)": https://www2.census.gov/programs-surveys/popest/datasets/2010-2020/national/totals/
