@@ -1,5 +1,5 @@
 ---
-title: "DATA 412/612 Final Proposal: Data Analysis on Hate Crimes and Political Affiliations"
+title: "DATA 412/612 Final Project: Data Analysis on Hate Crimes and Political Affiliations"
 author: "Liam Volk-Klos, Ella Robinson, Wesley Hoy"
 format: pdf
 editor: source
@@ -85,7 +85,7 @@ ggplot(combined_df, aes(total_prop)) +
        title = "Distribution of State Legislature Composition")
 ```
 
-The distribution of hate crime count by state is skewed right with three outliers of Washington Ohio and Texas. The mean is approximately 100 hate crimes with a range from 1 to about 600.
+The distribution of hate crime count by state is skewed right with three outliers of Washington, Ohio and Texas. The mean is approximately 100 hate crimes with a range from 1 to about 600.
 
 ## Distribution of Hate Crime Count by State
 
@@ -225,6 +225,8 @@ This model did not explain much of the variation in hate crimes by state. This i
 
 ## Matching Gun Law Rankings to Likelihood of Hate Crimes
 
+Gun Law Scorecard is an annual report by Giffords Law Center that gives an insight into gun law strength in each state. We used this data to try to find any correlation between gun laws and hate crimes.
+
 ```{r, message=FALSE, results='hide'}
 scorecard <- read_csv("data/giffords_gun_law_scorecard_2021.csv") %>%
   mutate(Grade = substr(Grade, 1, 1))
@@ -247,13 +249,15 @@ hate_crime_merged %>%
   group_by(Grade) %>%
   summarize(avg_crimes_reported = mean(crimes_reported, na.rm=TRUE)) %>%
   ggplot(aes(Grade, avg_crimes_reported)) + 
-    geom_bar(stat="identity")
+    geom_bar(stat="identity") +
+    labs(title = "Average Crimes Reported Per Grade", x = "Average Crimes Reported", y = "Grade")
 
 hate_crime_merged %>%
   group_by(Grade) %>%
   summarize(sd_crimes_reported = sd(crimes_reported, na.rm=TRUE)) %>%
   ggplot(aes(Grade, sd_crimes_reported)) + 
-    geom_bar(stat="identity")
+    geom_bar(stat="identity") + 
+    labs(title = "Standard Deviation of Crimes Reported Per Grade", x = "Standard Deviation of Crimes Reported", y = "Grade")
 ```
 
 As we can see, there could be a slight relationship with gun laws grade affecting amount of hate crimes in a state, but the numbers don't really add up, considering that the standard deviation mostly matches the mean graph.
@@ -269,12 +273,14 @@ As we can see, only two states ranked D, which is not enough to make any conclus
 ```{r}
 ggplot(hate_crime_merged, aes(Gun_Law_Strength_Rank, crimes_reported)) + 
   geom_point(aes(color=Grade)) +
-  geom_smooth(method = "lm", se = FALSE)
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Gun Law Strength Rate in Each State vs Crimes Reported", x = "Gun Law Strength Rate (Giffords)", y = "Crimes Reported")
   
 
 ggplot(hate_crime_merged, aes(Gun_Death_Rate_Rank, crimes_reported)) + 
   geom_point(aes(color=Grade))+
-  geom_smooth(method = "lm", se = FALSE)
+  geom_smooth(method = "lm", se = FALSE) + 
+  labs(title = "Gun Law Death Rate Rank in Each State vs Crimes Reported", x = "Gun Death Rate Rank (Giffords)", y = "Crimes Reported")
 
 ```
 
