@@ -1,3 +1,15 @@
 # DATA412Final
 
-Hate Crimes and State Legislature Composition
+https://github.com/ellahoch/DATA412Final
+
+# Contributors
+
+CONTRIBUTORS.MD
+
+# Quarto
+
+FinalReport.qmd
+
+# Renders
+
+renders/ directory
