@@ -1,7 +1,7 @@
 ---
 title: "DATA 412/612 Final Project: Data Analysis on Hate Crimes and Political Affiliations"
 author: "Liam Volk-Klos, Ella Robinson, Wesley Hoy"
-format: pdf
+format: html
 editor: source
 toc: true
 secNumbering: true
@@ -142,7 +142,7 @@ combined_df <- combined_df |>
 summary(lm(hate_crime_count ~ num_police + pop_2021, data = combined_df))
 ```
 
-## Association between Number of Police, Population, and Hate \nCrime Count by State
+## Association between Number of Police, Population, and Hate Crime Count by State
 
 We did find a statistically significant association between the number of police and population on the number of hate crimes reported by state. Notably, there is a negative association between the number of police and hate crimes reported in each state. This means that as the number of police in a state increase, we expect the number of hate crimes to decrease.
 

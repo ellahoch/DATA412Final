@@ -10,6 +10,7 @@ renv/
 *.docx
 *_files
 *.tex
+!renders/FinalReport.pdf
 
 # Ignore any raw data
 .csv
