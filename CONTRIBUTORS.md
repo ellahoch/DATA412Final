@@ -8,3 +8,14 @@ Wesley Hoy:
 - Pew Research Database
 - Information Organization
 - Information Writups
+
+
+Ella Hoch Robinson:
+
+- Created csv interperter
+- created exploritory graphs
+- Created scatterplots to show relationships
+- Completed part of literature review
+- Contributed to write up
+- Ran several linear regressions to find significant associations
+- Found and compliled nationa state legislature data
